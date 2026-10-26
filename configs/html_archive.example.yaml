@@ -1,0 +1,63 @@
+# HTML archive: PDF links are embedded in a publications page.
+# Swissmilk Marktlagebericht is the concrete instance. Change page_url,
+# link filters, and series labels for another archive of the same type.
+name: html-archive-swissmilk-marktlagebericht
+user_agent: pdf-extract-lite/0.1 (research; contact via project owner)
+
+source:
+  type: html_archive
+  page_url: https://www.swissmilk.ch/de/produzenten/milchmarkt/marktlage/marktlagebericht/
+  link_must_contain:
+    - marktlage
+    - .pdf
+  link_must_not_contain:
+    - /en/
+  year_min: 2021
+  year_max: 2027
+  year_regex: "20\\d{2}"
+  # Named groups year + month (German or numeric). Used only for local filenames.
+  stamp_regex: "marktlage-smp-(?P<year>20\\d{2})-(?P<month>[a-zä]+)"
+
+auth:
+  type: none
+  # bearer_env / cookie_env read the secret from the environment. Never put it here.
+  # env_var: PDF_AUTH_TOKEN
+
+download:
+  out_dir: data/raw/pdfs
+  rate_limit_seconds: 0.2
+  retries: 3
+  timeout_seconds: 60
+  min_bytes: 10000
+  headers: {}
+
+extract:
+  out: data/processed/marktinfo_ausland.csv
+  section_markers:
+    - Milch-Marktinformationen Ausland
+  section_end_markers:
+    - Richtpreise Branchenorganisation
+  series:
+    - {id: eu_vmp_kempten, unit: EUR_per_t, label: "EU VMP \\(26%"}
+    - {id: eu_vmp_frankreich, unit: EUR_per_t, label: "EU VMP \\(26%.*Frankreich"}
+    - {id: eu_mmp_kempten, unit: EUR_per_t, label: "EU MMP \\(Lm"}
+    - {id: eu_butter_kempten, unit: EUR_per_t, label: "EU Butter \\(lose, Kempten\\)"}
+    - {id: eu_butter_frankreich, unit: EUR_per_t, label: "EU Butter \\(lose, Frankreich\\)"}
+    - {id: emmentaler_industrie_kempten, unit: EUR_per_t, label: "Emmentaler \\(Industrie"}
+    - {id: emmentaler_rohmilch_kempten, unit: EUR_per_t, label: "Emmentaler \\(Rohmilch"}
+    - {id: milchpreis_lto, unit: EUR_per_100kg, label: "Milchpreis \\(EDF|Milchpreis \\(LTO"}
+    - {id: spotmilch_lodi, unit: EUR_per_100kg, label: "Spotmilch \\(Lodi"}
+    - {id: rohstoffwert_ife, unit: EUR_per_100kg, label: "Rohstoffwert \\(ife"}
+    - {id: milk_delta_de, unit: pct_yoy, label: "^Deutschland"}
+    - {id: milk_delta_fr, unit: pct_yoy, label: "^Frankreich"}
+    - {id: milk_delta_eu20, unit: pct_yoy, label: "EU-20"}
+    - {id: vmp_weltmarkt, unit: USD_per_t, label: "VMP \\(26%.*Weltmarkt"}
+    - {id: vmp_ozeanien, unit: USD_per_t, label: "VMP \\(26%.*Ozeanien"}
+    - {id: mmp_weltmarkt, unit: USD_per_t, label: "MMP \\(Lm.*Weltmarkt"}
+    - {id: butter_weltmarkt, unit: USD_per_t, label: "Butter \\(fob, Weltmarkt\\)"}
+    - {id: butter_ozeanien, unit: USD_per_t, label: "Butter \\(fob, Ozeanien\\)"}
+    - {id: usa_butter, unit: kt, label: "USA: Butter"}
+    - {id: usa_mmp, unit: kt, label: "USA: MMP"}
+    - {id: milk_delta_nz, unit: pct_yoy, label: "^Neuseeland"}
+    - {id: milk_delta_au, unit: pct_yoy, label: "^Australien"}
+    - {id: milk_delta_us, unit: pct_yoy, label: "^USA$"}

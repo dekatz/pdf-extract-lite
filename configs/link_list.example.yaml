@@ -1,0 +1,26 @@
+# Link list: URLs already collected (browser export, sitemap, another script).
+name: link-list-local
+user_agent: pdf-extract-lite/0.1
+
+source:
+  type: link_list
+  list_path: data/external/pdf_urls.txt
+  stamp_regex: "(?P<year>20\\d{2})-(?P<month>\\d{2})"
+
+auth:
+  type: none
+
+download:
+  out_dir: data/raw/pdfs
+  rate_limit_seconds: 0.2
+  retries: 3
+  timeout_seconds: 60
+  min_bytes: 10000
+
+extract:
+  out: data/processed/from_link_list.csv
+  section_markers:
+    - Market
+  section_end_markers: []
+  series:
+    - {id: example_series, unit: native, label: "Example label"}

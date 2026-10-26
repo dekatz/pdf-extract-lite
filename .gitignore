@@ -1,0 +1,17 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Local runs — do not commit scraped PDFs or extracts
+data/raw/
+data/interim/
+data/processed/
+data/external/*failures*
+*.part
+
+# Secrets
+.env
+*.cookie

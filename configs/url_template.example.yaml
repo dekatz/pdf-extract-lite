@@ -1,0 +1,56 @@
+# URL template: no HTML scrape. The publisher uses a stable path.
+# Example shape (not a live claim that this exact host exists):
+#   https://stats.example.org/bulletins/{year}/{month:02d}/bulletin-{year}-{month_name}.pdf
+# Copy this file and replace url_template, year range, and series labels.
+name: url-template-monthly-bulletin
+user_agent: pdf-extract-lite/0.1 (research)
+
+source:
+  type: url_template
+  url_template: "https://stats.example.org/bulletins/{year}/{month:02d}/bulletin-{year}-{month_name}.pdf"
+  year_min: 2021
+  year_max: 2026
+  months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+  month_names:
+    1: january
+    2: february
+    3: march
+    4: april
+    5: may
+    6: june
+    7: july
+    8: august
+    9: september
+    10: october
+    11: november
+    12: december
+  stamp_regex: "bulletin-(?P<year>20\\d{2})-(?P<month>[a-z]+)"
+
+auth:
+  type: none
+  # For a gated bulletin, switch to cookie_env and set BULLETIN_COOKIE outside the file.
+  # type: cookie_env
+  # env_var: BULLETIN_COOKIE
+
+download:
+  out_dir: data/raw/pdfs
+  rate_limit_seconds: 0.5
+  retries: 3
+  timeout_seconds: 60
+  min_bytes: 8000
+  headers: {}
+
+extract:
+  out: data/processed/bulletin_series.csv
+  section_markers:
+    - International prices
+    - Marktinfo
+  section_end_markers:
+    - Notes
+    - Disclaimer
+  series:
+    - {id: butter_eu, unit: EUR_per_t, label: "Butter.*EU"}
+    - {id: smp_eu, unit: EUR_per_t, label: "Skim milk powder.*EU"}
+    - {id: wmp_oceania, unit: USD_per_t, label: "Whole milk powder.*Oceania"}
+    - {id: milk_delta_us, unit: pct_yoy, label: "United States"}
+    - {id: milk_delta_nz, unit: pct_yoy, label: "New Zealand"}

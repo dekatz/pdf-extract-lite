@@ -1,0 +1,16 @@
+[project]
+name = "pdf-extract-lite"
+version = "0.1.0"
+description = "Config-driven PDF archive download and section extract, built for short agent turns."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "PyYAML>=6",
+  "requests>=2.31",
+]
+
+[project.scripts]
+pdf-extract-lite = "pdf_extract_lite.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
